@@ -3,7 +3,7 @@
         <v-icon class="drawer__close" @click="toggleDrawer()">
             mdi-menu
         </v-icon>
-        <div class="header__logo row-align">
+        <div class="header__logo row-align" @click="$router.push('/')">
             <img src="@/assets/sum2.png" />
             SUMCoin
         </div>
@@ -27,6 +27,7 @@ export default {
     width: 100vw;
     background: #173268;
     &__logo {
+        cursor: pointer;
         font-size: 24px;
         color: #fff;
         font-weight: 600;

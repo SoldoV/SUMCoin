@@ -13,7 +13,9 @@
                                 class="drawer__list-item row-align"
                                 v-for="(item, i) in listItems"
                                 :key="i"
-                                @click="router.push(item.path)"
+                                @click="
+                                    $router.push(item.path) && toggleDrawer()
+                                "
                             >
                                 <v-icon class="drawer__close">
                                     {{ item.icon }}
@@ -37,7 +39,8 @@ export default {
         listItems: [
             { name: 'Profile', icon: 'mdi-account', path: '/profile' },
             { name: 'Create Transaction', icon: 'mdi-note-plus', path: '/new' },
-            { name: 'Settings', icon: 'mdi-cog', path: '/new' },
+            { name: 'Settings', icon: 'mdi-cog', path: '/settings' },
+            { name: 'Mine', icon: 'mdi-pickaxe', path: '/mine' },
         ],
     }),
     computed: {
@@ -114,14 +117,5 @@ export default {
 .show-leave-to {
     transform: translateX(-100%);
     transition: all 0.2s linear;
-}
-
-.drawer-enter-active,
-.drawer-leave-active {
-    transition: opacity 0.2s;
-}
-.drawer-enter,
-.drawer-leave-to {
-    opacity: 0;
 }
 </style>

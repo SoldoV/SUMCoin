@@ -1,13 +1,16 @@
 <template>
-    <div id="app">
-        <Drawer />
-        <Header />
-        <Block class="row-center" />
-        <router-view />
-    </div>
+    <v-app>
+        <div id="app">
+            <Drawer />
+            <Header />
+            <router-view />
+        </div>
+    </v-app>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     name: 'DefaultLayout',
     components: {
@@ -21,11 +24,13 @@ export default {
                 /* webpackChunkName: "header" */
                 './components/Header'
             ),
-        Block: () =>
-            import(
-                /* webpackChunkName: "header" */
-                './components/Block'
-            ),
+    },
+    methods: {
+        ...mapActions(['createBlockchain']),
+    },
+    mounted() {
+        console.log(this.$store.getters.getBlockchain);
+        if (!this.$store.getters.getBlockchain) this.createBlockchain();
     },
 };
 </script>

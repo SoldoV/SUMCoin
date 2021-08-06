@@ -1,35 +1,29 @@
 <template>
     <div class="block">
-        <v-card
-            class="block__card mx-auto"
-            max-width="344"
-            outlined
-            v-for="(item, i) in block.chain"
-            :key="i"
-        >
+        <v-card class="block__card mx-auto" max-width="344" outlined>
             <div class="block__title">
-                Block {{ i }}
-                <p v-if="i === 0">(Genesis block)</p>
+                Block {{ index }}
+                <p v-if="index == 0">(Genesis block)</p>
             </div>
             <div class="block__body">
                 <div>
                     <p>Hash:</p>
-                    {{ item.hash }}
+                    {{ block.hash }}
                 </div>
 
                 <div>
                     <p>Hash of previous block:</p>
-                    {{ item.previousHash }}
+                    {{ block.previousHash }}
                 </div>
 
                 <div>
                     <p>Nonce:</p>
-                    {{ item.nonce }}
+                    {{ block.nonce }}
                 </div>
 
                 <div>
                     <p>Time:</p>
-                    {{ getTime(item.timestamp) }}
+                    {{ getTime(block.timestamp) }}
                 </div>
             </div>
         </v-card>
@@ -37,28 +31,34 @@
 </template>
 
 <script>
-import { Blockchain } from '../services/blockchain.js';
 import dayjs from 'dayjs';
 
 export default {
-    data: () => ({
-        block: null,
-    }),
+    name: 'Block',
+    props: {
+        block: {
+            type: Object,
+            required: true,
+        },
+        index: {
+            type: Number,
+            required: true,
+        },
+    },
     methods: {
         getTime(timestamp) {
             return dayjs(timestamp).format('DD/MM/YYYY HH:mm:ss');
         },
-    },
-    created() {
-        this.block = new Blockchain();
     },
 };
 </script>
 
 <style lang="scss">
 .block {
-    margin-top: 20px;
+    margin: 10px;
+    margin-top: 70px;
     &__card {
+        height: 345px;
         padding: 20px;
         border-color: rgb(184, 184, 184) !important;
     }
@@ -80,12 +80,18 @@ export default {
             font-weight: 400;
             color: rgb(99, 99, 99);
             p {
+                margin: 0px;
                 font-weight: 500;
                 display: inline-block;
                 color: #173268;
             }
             margin-bottom: 10px;
         }
+    }
+}
+.active-block {
+    .block__card {
+        border: 2px solid #173268 !important;
     }
 }
 </style>

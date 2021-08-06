@@ -20,12 +20,15 @@ export class Transaction {
     }
 
     signTransaction(signingKey) {
-        if (signingKey.getPublic('hex') !== this.fromAddress) {
+        console.log(signingKey);
+        console.log(this.fromAddress);
+        const key = ec.keyFromPrivate(signingKey.priv, 'hex');
+        if (key.getPublic('hex') !== this.fromAddress) {
             throw new Error('You cannot sign transactions for other wallets!');
         }
 
         const hashTx = this.calculateHash();
-        const sig = signingKey.sign(hashTx, 'base64');
+        const sig = key.sign(hashTx, 'base64');
 
         this.signature = sig.toDER('hex');
     }
@@ -92,9 +95,9 @@ export class Blockchain {
         this.miningReward = 100;
     }
 
-    createGenesisBlock() {
+    createGenesisBlock = function() {
         return new Block(Date.parse('2017-01-01'), [], '0');
-    }
+    };
 
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
@@ -118,6 +121,7 @@ export class Blockchain {
         this.chain.push(block);
 
         this.pendingTransactions = [];
+        return;
     }
 
     addTransaction(transaction) {
