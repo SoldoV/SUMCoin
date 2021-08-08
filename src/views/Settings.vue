@@ -28,7 +28,7 @@
 
             <template v-slot:action="{ attrs }">
                 <v-btn
-                    color="blue"
+                    color="white"
                     text
                     v-bind="attrs"
                     @click="snackbar = false"
@@ -73,6 +73,10 @@ export default {
 
 <style lang="scss">
 .settings {
+    max-width: 1094px;
+    width: 100%;
+    padding: 0 20px;
+    margin: 0 auto;
     &__card {
         max-width: 300px !important;
         width: 100%;

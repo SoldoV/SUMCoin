@@ -28,15 +28,15 @@
         </div>
         <v-snackbar
             v-model="snackbar"
-            color="primary"
+            :color="snackColor"
             class="snack"
             :timeout="2000"
         >
-            Transaction successfully added to pending transactions!
+            {{ snackText }}
 
             <template v-slot:action="{ attrs }">
                 <v-btn
-                    color="blue"
+                    color="white"
                     text
                     v-bind="attrs"
                     @click="snackbar = false"
@@ -57,41 +57,59 @@ export default {
         newTx: {},
         walletKey: {},
         snackbar: false,
+        snackColor: '',
+        snackText: '',
     }),
     computed: {
         ...mapGetters({
             getWalletKeys: 'getWalletKeys',
+            getBlockchain: 'getBlockchain',
         }),
     },
     methods: {
-        ...mapActions(['addTransaction']),
+        ...mapActions(['addTransaction', 'calculateBalanceOfAddress']),
         createTransaction() {
-            this.newTx.fromAddress = this.walletKey.publicKey;
-            this.newTx.signTransaction(this.walletKey.keyObj);
-            this.addTransaction(this.newTx).then(() => (this.snackbar = true));
+            if (this.checkBalance()) {
+                this.snackColor = 'red';
+                this.snackText = 'Not enough balance';
+                this.snackbar = true;
+            } else {
+                this.newTx.fromAddress = this.walletKey.publicKey;
+                this.newTx.signTransaction(this.walletKey.keyObj);
 
-            this.newTx = new Transaction();
+                this.snackColor = 'success';
+                this.snackText =
+                    'Transaction successfully added to pending transactions!';
+
+                this.addTransaction(this.newTx).then(
+                    () => (this.snackbar = true)
+                );
+
+                this.newTx = new Transaction();
+            }
+        },
+        checkBalance() {
+            return (
+                this.calculateBalanceOfAddress(this.walletKey.publicKey) -
+                    this.newTx.amount <=
+                0
+            );
         },
     },
     mounted() {
         this.newTx = new Transaction();
         this.walletKey = this.getWalletKeys[0];
-        console.log(this.walletKey);
     },
 };
 </script>
 
 <style lang="scss">
 .new-transaction {
-    &__card {
-        max-width: 700px !important;
-        width: 100%;
-        margin: 0 auto;
-    }
+    max-width: 1094px;
+    width: 100%;
+    padding: 0 20px;
+    margin: 0 auto;
     &__title {
-        max-width: 700px;
-        width: 100%;
-        margin: 0 auto;
         margin: 50px auto;
         font-size: 28px;
         font-weight: bold;
@@ -114,9 +132,9 @@ export default {
     }
 }
 
-.snack {
+/* .snack {
     .v-snack__wrapper {
         background: #22d428 !important;
     }
-}
+} */
 </style>

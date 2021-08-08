@@ -1,20 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexPersistence from 'vuex-persist';
 import { Blockchain } from '../services/blockchain.js';
 import EC from 'elliptic';
+import { parse, stringify } from '../helpers/JSON.helper.js';
 
 Vue.use(Vuex);
-
-const vuexLocal = new VuexPersistence({
-    storage: window.localStorage,
-});
 
 export default new Vuex.Store({
     state: {
         drawer: false,
-        blockchain: null,
-        walletKeys: [],
+        blockchain: parse(localStorage.getItem('blockchain')) || null,
+        walletKeys: JSON.parse(localStorage.getItem('walletKeys')) || [],
     },
     getters: {
         getDrawer: (state) => state.drawer,
@@ -25,7 +21,6 @@ export default new Vuex.Store({
     actions: {
         createBlockchain({ dispatch, state }) {
             state.blockchain = new Blockchain();
-            console.log(state.blockchain);
             state.blockchain.difficulty = 1;
             dispatch('generateWalletKeys');
         },
@@ -43,16 +38,54 @@ export default new Vuex.Store({
                 state.walletKeys[0].publicKey
             );
 
-            console.log(this.walletKeys);
+            localStorage.setItem('blockchain', stringify(state.blockchain));
+            localStorage.setItem(
+                'walletKeys',
+                JSON.stringify(state.walletKeys)
+            );
         },
         addTransaction({ state }, newTx) {
-            console.log(state.blockchain);
-            return state.blockchain.addTransaction(newTx);
+            state.blockchain.addTransaction(newTx);
+            return localStorage.setItem(
+                'blockchain',
+                stringify(state.blockchain)
+            );
         },
         async minePendingTransactions({ state }) {
             await state.blockchain.minePendingTransactions(
                 state.walletKeys[0].publicKey
             );
+            localStorage.setItem('blockchain', stringify(state.blockchain));
+        },
+        calculateBalanceOfAddress({ state }, address) {
+            let balance = 0;
+
+            for (const block of state.blockchain.chain) {
+                for (const trans of block.transactions) {
+                    if (trans.fromAddress === address) {
+                        balance -= trans.amount;
+                    }
+
+                    if (trans.toAddress === address) {
+                        balance += trans.amount;
+                    }
+                }
+            }
+            return balance;
+        },
+        getWalletTransactions({ state }, address) {
+            let transactions = [];
+            for (const block of state.blockchain.chain) {
+                for (const trans of block.transactions) {
+                    if (
+                        trans.fromAddress === address ||
+                        trans.toAddress === address
+                    ) {
+                        transactions.push(trans);
+                    }
+                }
+            }
+            return transactions;
         },
     },
     mutations: {
@@ -62,8 +95,8 @@ export default new Vuex.Store({
         setSettings(state, settings) {
             state.blockchain.difficulty = settings.difficulty;
             state.blockchain.miningReward = settings.miningReward;
+            localStorage.setItem('blockchain', stringify(state.blockchain));
         },
     },
     modules: {},
-    plugins: [vuexLocal.plugin],
 });

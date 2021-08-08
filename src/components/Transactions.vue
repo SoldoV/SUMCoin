@@ -10,7 +10,13 @@
             <template #item.fromAddress="{ item }">
                 <v-tooltip bottom content-class="transactions__tooltip">
                     <template v-slot:activator="{ on }">
-                        <div v-on="on">{{ item.fromAddress }}</div>
+                        <div
+                            v-on="on"
+                            class="transactions__link"
+                            @click="$router.push(`/wallet/${item.fromAddress}`)"
+                        >
+                            {{ item.fromAddress }}
+                        </div>
                     </template>
                     <span>{{ item.fromAddress }}</span>
                 </v-tooltip>
@@ -19,7 +25,13 @@
             <template #item.toAddress="{ item }">
                 <v-tooltip bottom content-class="transactions__tooltip">
                     <template v-slot:activator="{ on }">
-                        <div v-on="on">{{ item.toAddress }}</div>
+                        <div
+                            v-on="on"
+                            class="transactions__link"
+                            @click="$router.push(`/wallet/${item.toAddress}`)"
+                        >
+                            {{ item.toAddress }}
+                        </div>
                     </template>
                     <span>{{ item.toAddress }}</span>
                 </v-tooltip>
@@ -67,6 +79,11 @@ export default {
     td {
         max-width: 200px;
         overflow: hidden;
+    }
+    &__link {
+        text-decoration: underline;
+        cursor: pointer;
+        color: #173268;
     }
 }
 .transactions__tooltip {

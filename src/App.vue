@@ -29,7 +29,6 @@ export default {
         ...mapActions(['createBlockchain']),
     },
     mounted() {
-        console.log(this.$store.getters.getBlockchain);
         if (!this.$store.getters.getBlockchain) this.createBlockchain();
     },
 };

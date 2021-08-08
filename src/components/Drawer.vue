@@ -14,7 +14,10 @@
                                 v-for="(item, i) in listItems"
                                 :key="i"
                                 @click="
-                                    $router.push(item.path) && toggleDrawer()
+                                    item.name === 'Profile'
+                                        ? goToProfile()
+                                        : $router.push(item.path) &&
+                                          toggleDrawer()
                                 "
                             >
                                 <v-icon class="drawer__close">
@@ -31,25 +34,39 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     name: 'DefaultDrawer',
     data: () => ({
         listItems: [
-            { name: 'Profile', icon: 'mdi-account', path: '/profile' },
+            {
+                name: 'Profile',
+                icon: 'mdi-account',
+                path: '',
+            },
             { name: 'Create Transaction', icon: 'mdi-note-plus', path: '/new' },
             { name: 'Settings', icon: 'mdi-cog', path: '/settings' },
             { name: 'Mine', icon: 'mdi-pickaxe', path: '/mine' },
         ],
     }),
     computed: {
+        ...mapGetters({
+            getWalletKeys: 'getWalletKeys',
+        }),
         getDrawer() {
             return this.$store.getters.getDrawer;
         },
     },
     methods: {
         ...mapMutations(['toggleDrawer']),
+        goToProfile() {
+            return (
+                this.$router.push(
+                    `/wallet/${this.getWalletKeys[0].publicKey}`
+                ) && this.toggleDrawer()
+            );
+        },
     },
 };
 </script>

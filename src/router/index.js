@@ -27,6 +27,12 @@ const routes = [{
         component: () =>
             import ( /* webpackChunkName: "mine" */ '../views/Mining.vue'),
     },
+    {
+        path: '/wallet/:id',
+        name: 'wallet',
+        component: () =>
+            import ( /* webpackChunkName: "wallet" */ '../views/Wallet.vue'),
+    },
 ];
 
 const router = new VueRouter({

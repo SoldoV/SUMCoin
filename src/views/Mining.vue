@@ -23,6 +23,7 @@ export default {
             {
                 value: 'index',
                 text: '#',
+                sortable: false,
                 align: 'start',
             },
             {
