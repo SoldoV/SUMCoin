@@ -106,7 +106,7 @@ export class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
-    minePendingTransactions(miningRewardAddress) {
+    async minePendingTransactions(miningRewardAddress) {
         const rewardTx = new Transaction(
             null,
             miningRewardAddress,
@@ -119,7 +119,7 @@ export class Blockchain {
             this.pendingTransactions,
             this.getLatestBlock().hash
         );
-        block.mineBlock(this.difficulty);
+        await block.mineBlock(this.difficulty);
 
         this.chain.push(block);
 

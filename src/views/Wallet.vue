@@ -5,7 +5,7 @@
         <div class="wallet__text">{{ $route.params.id }}</div>
         <div class="wallet__subtitle">Balance:</div>
         <div class="wallet__text">
-            {{ balance }}
+            {{ parseFloat(balance) }}
         </div>
         <Transactions :transactions="transactions" :headers="headers" />
     </div>

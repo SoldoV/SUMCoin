@@ -7,6 +7,7 @@ export function stringify(obj) {
 }
 
 export function parse(str) {
+    if (!str) return null;
     let o = JSON.parse(str);
     return Object.assign(new Blockchain(), o);
 }
