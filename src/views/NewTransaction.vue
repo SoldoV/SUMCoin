@@ -67,7 +67,7 @@ export default {
         }),
     },
     methods: {
-        ...mapActions(['addTransaction', 'calculateBalanceOfAddress']),
+        ...mapActions(['addTransaction']),
         createTransaction() {
             if (this.checkBalance()) {
                 this.snackColor = 'red';
@@ -90,7 +90,9 @@ export default {
         },
         checkBalance() {
             return (
-                this.calculateBalanceOfAddress(this.walletKey.publicKey) -
+                this.getBlockchain.getBalanceOfAddress(
+                    this.walletKey.publicKey
+                ) -
                     this.newTx.amount <=
                 0
             );

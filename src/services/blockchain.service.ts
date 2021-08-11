@@ -30,8 +30,6 @@ export class BlockchainService {
             publicKey: key.getPublic('hex'),
             privateKey: key.getPrivate('hex'),
         });
-
-        console.log(this.walletKeys);
     }
 
     getPendingTransactions() {

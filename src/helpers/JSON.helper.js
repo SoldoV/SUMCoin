@@ -1,3 +1,5 @@
+import { Blockchain } from '../services/blockchain.js';
+
 export function stringify(obj) {
     return JSON.stringify(obj, function(key, value) {
         return typeof value === 'function' ? value.toString() : value;
@@ -5,10 +7,6 @@ export function stringify(obj) {
 }
 
 export function parse(str) {
-    return JSON.parse(str, function(key, value) {
-        if (typeof value != 'string') return value;
-        return value.substring(0, 8) == 'function' ?
-            eval('(' + value + ')') :
-            value;
-    });
+    let o = JSON.parse(str);
+    return Object.assign(new Blockchain(), o);
 }

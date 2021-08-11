@@ -64,13 +64,14 @@ export class Block {
             .digest('hex');
     }
 
-    mineBlock(difficulty) {
+    async mineBlock(difficulty) {
         while (
             this.hash.substring(0, difficulty) !==
-            Array(difficulty + 1).join('0')
+            Array(parseInt(difficulty)).fill('0').join('')
         ) {
             this.nonce++;
             this.hash = this.calculateHash();
+            console.log(this.hash);
         }
     }
 
@@ -91,6 +92,10 @@ export class Blockchain {
         this.difficulty = 2;
         this.pendingTransactions = [];
         this.miningReward = 100;
+    }
+
+    serialize() {
+        return JSON.stringify(this);
     }
 
     createGenesisBlock = function() {
@@ -161,20 +166,6 @@ export class Blockchain {
         }
 
         return balance;
-    }
-
-    getAllTransactionsForWallet(address) {
-        const txs = [];
-
-        for (const block of this.chain) {
-            for (const tx of block.transactions) {
-                if (tx.fromAddress === address || tx.toAddress === address) {
-                    txs.push(tx);
-                }
-            }
-        }
-
-        return txs;
     }
 
     isChainValid() {

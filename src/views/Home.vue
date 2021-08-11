@@ -39,7 +39,6 @@ export default {
             { text: 'To Address', sortable: false, value: 'toAddress' },
             { text: 'Amount', sortable: false, value: 'amount' },
             { text: 'Time', sortable: false, value: 'timestamp' },
-            { text: 'IsValid', sortable: false, value: 'isValid()' },
         ],
     }),
     components: {
