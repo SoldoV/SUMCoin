@@ -63,11 +63,11 @@ export default new Vuex.Store({
             for (const block of state.blockchain.chain) {
                 for (const trans of block.transactions) {
                     if (trans.fromAddress === address) {
-                        balance -= trans.amount;
+                        balance -= parseFloat(trans.amount);
                     }
 
                     if (trans.toAddress === address) {
-                        balance += trans.amount;
+                        balance += parseFloat(trans.amount);
                     }
                 }
             }

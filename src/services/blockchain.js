@@ -99,7 +99,7 @@ export class Blockchain {
     }
 
     createGenesisBlock = function() {
-        return new Block(Date.parse('2017-01-01'), [], '0');
+        return new Block(Date.now(), [], '0');
     };
 
     getLatestBlock() {

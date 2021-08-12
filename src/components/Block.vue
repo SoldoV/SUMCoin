@@ -58,7 +58,7 @@ export default {
     margin: 10px;
     margin-top: 70px;
     &__card {
-        height: 345px;
+        height: 365px;
         padding: 20px;
         border-color: rgb(184, 184, 184) !important;
     }

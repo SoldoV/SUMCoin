@@ -8,7 +8,11 @@
             class="elevation-1 ma-5"
         >
             <template #item.fromAddress="{ item }">
-                <v-tooltip bottom content-class="transactions__tooltip">
+                <v-tooltip
+                    bottom
+                    content-class="transactions__tooltip"
+                    v-if="item.fromAddress"
+                >
                     <template v-slot:activator="{ on }">
                         <div
                             v-on="on"
@@ -20,6 +24,7 @@
                     </template>
                     <span>{{ item.fromAddress }}</span>
                 </v-tooltip>
+                <div v-else>{{ 'Mining reward (System)' }}</div>
             </template>
 
             <template #item.toAddress="{ item }">

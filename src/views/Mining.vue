@@ -7,6 +7,7 @@
         <v-btn
             class="mining__btn"
             :loading="loading"
+            :disabled="!getPendingTransactions.length"
             @click="mineTransactions()"
             >Mine pending transactions</v-btn
         >
