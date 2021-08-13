@@ -50,7 +50,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import { Transaction } from '@/services/blockchain.js';
+import { Transaction } from '@/services/transaction.js';
 
 export default {
     data: () => ({
