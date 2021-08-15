@@ -10,10 +10,6 @@ export class Blockchain {
         this.miningReward = 100;
     }
 
-    serialize() {
-        return JSON.stringify(this);
-    }
-
     createGenesisBlock = function() {
         return new Block('10/10/2020', [], '0');
     };
