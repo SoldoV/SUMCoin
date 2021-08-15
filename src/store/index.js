@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { Blockchain } from '../services/blockchain.js';
 import EC from 'elliptic';
 import { parse, stringify } from '../helpers/JSON.helper.js';
+import * as socketio from '../plugins/socketio';
 
 Vue.use(Vuex);
 
@@ -25,7 +26,7 @@ export default new Vuex.Store({
             dispatch('generateWalletKeys');
         },
 
-        generateWalletKeys({ state }) {
+        generateWalletKeys({ dispatch, state }) {
             const ec = new EC.ec('secp256k1');
             const key = ec.genKeyPair();
 
@@ -43,19 +44,32 @@ export default new Vuex.Store({
                 'walletKeys',
                 JSON.stringify(state.walletKeys)
             );
+            dispatch('sendChain');
+        },
+        sendChain({ state }) {
+            socketio.sendEvent({
+                type: 'send',
+                data: state.blockchain,
+            });
         },
         addTransaction({ state }, newTx) {
-            state.blockchain.addTransaction(newTx);
+            if (state.blockchain.addTransaction(newTx)) {
+                socketio.sendEvent({
+                    type: 'pending',
+                    data: state.blockchain.pendingTransactions,
+                });
+            }
             return localStorage.setItem(
                 'blockchain',
                 stringify(state.blockchain)
             );
         },
-        async minePendingTransactions({ state }) {
+        async minePendingTransactions({ dispatch, state }) {
             await state.blockchain.minePendingTransactions(
                 state.walletKeys[0].publicKey
             );
             localStorage.setItem('blockchain', stringify(state.blockchain));
+            dispatch('sendChain');
         },
         calculateBalanceOfAddress({ state }, address) {
             let balance = 0;
@@ -86,6 +100,24 @@ export default new Vuex.Store({
                 }
             }
             return transactions;
+        },
+        replaceChain({ state }, blockchain) {
+            const tempBlockchain = Object.assign(
+                new Blockchain(),
+                state.blockchain
+            );
+            if (tempBlockchain.replaceChain(blockchain)) {
+                state.blockchain = tempBlockchain;
+                localStorage.setItem('blockchain', stringify(tempBlockchain));
+            }
+        },
+        addPendingTransactions({ state }, transactions) {
+            const tempBlockchain = Object.assign(
+                new Blockchain(),
+                state.blockchain
+            );
+            transactions.forEach((tx) => tempBlockchain.addTransaction(tx));
+            localStorage.setItem('blockchain', stringify(tempBlockchain));
         },
     },
     mutations: {

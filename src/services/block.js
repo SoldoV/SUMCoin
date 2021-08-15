@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+import { Transaction } from './transaction.js';
 
 export class Block {
     constructor(timestamp, transactions, previousHash = '') {
@@ -28,12 +29,13 @@ export class Block {
         ) {
             this.nonce++;
             this.hash = this.calculateHash();
-            console.log(this.hash);
+            //(this.hash);
         }
     }
 
     hasValidTransactions() {
-        for (const tx of this.transactions) {
+        for (let tx of this.transactions) {
+            tx = Object.assign(new Transaction(), tx);
             if (!tx.isValid()) {
                 return false;
             }

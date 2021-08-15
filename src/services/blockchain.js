@@ -1,5 +1,6 @@
 import { Block } from './block.js';
 import { Transaction } from './transaction.js';
+import { parse, stringify } from '../helpers/JSON.helper.js';
 
 export class Blockchain {
     constructor() {
@@ -14,7 +15,7 @@ export class Blockchain {
     }
 
     createGenesisBlock = function() {
-        return new Block(Date.now(), [], '0');
+        return new Block('10/10/2020', [], '0');
     };
 
     getLatestBlock() {
@@ -39,10 +40,17 @@ export class Blockchain {
         this.chain.push(block);
 
         this.pendingTransactions = [];
+
+        const blockchain = parse(localStorage.getItem('blockchain'));
+        blockchain.chain = this.chain;
+        blockchain.pendingTransactions = this.pendingTransactions;
+        localStorage.setItem('blockchain', stringify(blockchain));
+
         return;
     }
 
     addTransaction(transaction) {
+        transaction = Object.assign(new Transaction(), transaction);
         if (!transaction.fromAddress || !transaction.toAddress) {
             throw new Error('Transaction must include from and to address');
         }
@@ -51,18 +59,19 @@ export class Blockchain {
             throw new Error('Cannot add invalid transaction to chain');
         }
 
-        if (transaction.amount <= 0) {
+        if (parseFloat(transaction.amount) <= 0) {
             throw new Error('Transaction amount should be higher than 0');
         }
 
         if (
-            this.getBalanceOfAddress(transaction.fromAddress) <
-            transaction.amount
+            parseFloat(this.getBalanceOfAddress(transaction.fromAddress)) <
+            parseFloat(transaction.amount)
         ) {
             throw new Error('Not enough balance');
         }
 
         this.pendingTransactions.push(transaction);
+        return true;
     }
 
     getBalanceOfAddress(address) {
@@ -91,7 +100,7 @@ export class Blockchain {
         }
 
         for (let i = 1; i < this.chain.length; i++) {
-            const currentBlock = this.chain[i];
+            const currentBlock = Object.assign(new Block(), this.chain[i]);
             const previousBlock = this.chain[i - 1];
 
             if (previousBlock.hash !== currentBlock.previousHash) {
@@ -110,16 +119,21 @@ export class Blockchain {
         return true;
     }
 
-    replaceChain(newChain) {
+    replaceChain(blockchain) {
+        const newChain = blockchain.chain;
         if (newChain.length <= this.chain.length) {
             console.log('Recieved chain is not longer than the current chain');
-            return;
+            return false;
         } else if (!this.isChainValid(newChain)) {
             console.log('Recieved chain is invalid');
-            return;
+            return false;
         }
 
         console.log('Replacing the current chain with new chain');
         this.chain = newChain;
+        this.difficulty = blockchain.difficulty;
+        this.pendingTransactions = blockchain.pendingTransactions;
+        this.miningReward = blockchain.miningReward;
+        return true;
     }
 }

@@ -10,6 +10,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import * as socketio from './plugins/socketio';
 
 export default {
     name: 'DefaultLayout',
@@ -26,9 +27,25 @@ export default {
             ),
     },
     methods: {
-        ...mapActions(['createBlockchain']),
+        ...mapActions([
+            'createBlockchain',
+            'replaceChain',
+            'addPendingTransactions',
+        ]),
     },
     mounted() {
+        socketio.addEventListener({
+            type: 'addBlockchain',
+            callback: (chain) => {
+                this.replaceChain(JSON.parse(chain));
+            },
+        });
+        socketio.addEventListener({
+            type: 'pending',
+            callback: (pending) => {
+                this.addPendingTransactions(JSON.parse(pending));
+            },
+        });
         if (!this.$store.getters.getBlockchain) this.createBlockchain();
     },
 };

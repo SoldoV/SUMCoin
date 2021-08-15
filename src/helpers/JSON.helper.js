@@ -2,7 +2,7 @@ import { Blockchain } from '../services/blockchain.js';
 
 export function stringify(obj) {
     return JSON.stringify(obj, function(key, value) {
-        return typeof value === 'function' ? value.toString() : value;
+        return value;
     });
 }
 
