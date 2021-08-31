@@ -29,7 +29,7 @@ export class Block {
         ) {
             this.nonce++;
             this.hash = this.calculateHash();
-            //(this.hash);
+            console.log(this.hash);
         }
     }
 
