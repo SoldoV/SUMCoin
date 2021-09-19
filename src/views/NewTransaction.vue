@@ -93,7 +93,7 @@ export default {
                 this.getBlockchain.getBalanceOfAddress(
                     this.walletKey.publicKey
                 ) -
-                    this.newTx.amount <=
+                    this.newTx.amount <
                 0
             );
         },
