@@ -5,7 +5,12 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Starts Node.js server
+```
+node src/server.js
+```
+
+### Compiles and hot-reloads for development (run multiple times for multiple nodes)
 ```
 npm run serve
 ```
